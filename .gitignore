@@ -1,7 +1,38 @@
+# Maven build target directory
 target/
 *.class
-logs/*.log
+
+# Runtime generated data and databases (no credentials or runtime state in git)
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.jcs
+*.tmp
+
+# Runtime logs
+logs/
 *.log
+
+# Environment variables & secrets (not required for SQLite, but best practice)
+.env
+*.env
+
+# Operating system & IDE artifacts
 .DS_Store
+Thumbs.db
 .idea/
 *.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Exclude non-code markdown documentation (only README.md is pushed)
+docs/
+*.md
+!README.md
+
+# Test suite directory (pure verification tests against the codebase, independent from production runtime)
+src/test/
