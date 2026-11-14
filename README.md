@@ -17,7 +17,7 @@ The application implements a production-grade cache engine entirely in RAM, feat
 - **Concurrent Workload Simulation Pipeline**: A multi-worker producer-consumer subsystem utilizing custom monitor-synchronized bounded buffers, pause gates, and key-space distribution generators.
 - **Dual Out-of-Band Persistence**: Point-in-time ACID transactions using SQLite (WAL mode) and portable custom binary `.jcs` file serialization protected by CRC32 checksum verification.
 - **Modern Desktop JavaFX User Interface**: 9 interactive, fully-functional management tabs featuring real-time charts, procedural vector canvas icons, visual transforms (`DropShadow`, `Glow`, `Scale`, `Rotate`), and non-blocking 250ms timeline metric polling.
-- **Educational Concurrency & Collections Lab**: Live interactive demonstrations of race conditions, thread synchronization benefits, collection benchmarking (`Vector` vs `ArrayList`, `Hashtable` vs `HashMap`), and generic multi-type cache operations.
+- **Educational Concurrency & Collections Lab**: Live interactive demonstrations of race conditions, thread synchronization benefits, collection benchmarking (`Vector` vs `ArrayList`, `Hashtable` vs `HashMap`), and generic multi-type cache operations
 
 ### 1.2 Significance of the Project
 In distributed systems, web backends, and financial transaction engines, the **latency disparity** between processor execution and secondary storage is the primary performance bottleneck:
