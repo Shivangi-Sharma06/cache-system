@@ -78,20 +78,6 @@ public final class DatabaseManager {
               outcome TEXT NOT NULL,
               latency_nanos INTEGER,
               details TEXT);
-
-            CREATE TABLE IF NOT EXISTS benchmark_runs (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              ran_at INTEGER NOT NULL,
-              eviction_policy TEXT NOT NULL,
-              capacity INTEGER NOT NULL,
-              threads INTEGER NOT NULL,
-              key_distribution TEXT NOT NULL,
-              operation_mix TEXT NOT NULL,
-              total_ops INTEGER NOT NULL,
-              duration_nanos INTEGER NOT NULL,
-              ops_per_second REAL NOT NULL,
-              hit_ratio REAL NOT NULL,
-              evictions INTEGER NOT NULL);
             """;
 
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {

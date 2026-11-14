@@ -16,11 +16,10 @@ Built as a capstone project for **CSE 309 (Advanced Java Programming)**, demonst
 - **Thread-Safe Engine**: Single private monitor lock (`synchronized`) enforcing leaf-lock discipline (mathematically deadlock-free).
 - **Concurrency & Simulation**: Multi-worker producer-consumer workload simulator (1–64 threads) using custom `BoundedBuffer<T>`, `PauseGate`, and customizable key distributions.
 - **Dual Persistence Layer**:
-  - **SQLite Database**: Out-of-band durable storage (WAL mode, transactions, rollback) for point-in-time snapshots, operation history, and benchmark runs. Zero credentials needed.
+  - **SQLite Database**: Out-of-band durable storage (WAL mode, transactions, rollback) for point-in-time snapshots and operation history. Zero credentials needed.
   - **Binary Snapshot (`.jcs`)**: Fast, portable serialization via `DataOutputStream` with magic header (`0x4A435331`) and CRC32 integrity checksum.
-- **JavaFX Desktop GUI (9 Tabs)**: Dashboard, Operations, Explorer, Configuration, Simulator, Statistics, Persistence, History, and Concepts Lab with real-time charts and visual effects (`DropShadow`, `Glow`, `Scale`, `Rotate`).
+- **JavaFX Desktop GUI (8 Tabs)**: Dashboard, Operations, Explorer, Configuration, Simulator, Statistics, Persistence, and History with real-time charts and visual effects (`DropShadow`, `Glow`, `Scale`, `Rotate`).
 - **AWT Event Console**: Standalone process demonstrating the pure Delegation Event Model (`ActionListener`, `KeyListener`, `KeyAdapter`, `WindowAdapter`).
-- **Educational Concepts Lab**: Interactive testbeds for race conditions, collections benchmarking (`Vector`, `Hashtable` vs modern equivalents), and generic multi-type caches.
 
 ---
 
@@ -43,8 +42,8 @@ Built as a capstone project for **CSE 309 (Advanced Java Programming)**, demonst
 | **Unit 1: Core OOP & Java Fundamentals** | Classes, Encapsulation, Abstract classes, Interfaces, Inheritance | `Cache<K,V>` interface, `AbstractCache<K,V>` skeletal base, `ThreadSafeCache<K,V>`, `StringCache`. Constructor chaining via `this(...)` in `CacheConfiguration`. Static factories in `CacheFactory`. Immutability with `final` fields in `CacheEntrySnapshot`. |
 | **Unit 2: Polymorphism, Exceptions & Generics** | Overloading, Overriding, Dynamic dispatch, Checked exceptions, Generics | Overloaded `put()` and `update()`. Dynamic eviction policy dispatch via `EvictionPolicy<K>`. Custom exception hierarchy rooted at `CacheException` with user-friendly messages. Multi-catch (`A \| B e`), nested `try`/`finally` rollback. Bounded generics `<T extends Comparable<? super T>>` and wildcards `Map<? extends K, ? extends V>`. |
 | **Unit 3: Multithreading, I/O & Event Model** | Thread states, Monitors, Inter-thread comms, Byte streams, AWT events | `WorkerThread extends Thread`, `OperationProducerTask implements Runnable`. Live thread state inspection (`Thread.getState()`). Monitor synchronization, `wait()` inside `while` loops, and `notifyAll()` in `BoundedBuffer` and `PauseGate`. Binary `.jcs` file I/O via `DataOutputStream` and CRC32. AWT Delegation Event Model (`ActionListener`, `KeyListener`, `KeyAdapter`, `WindowAdapter`). |
-| **Unit 4: JDBC & Collections Framework** | SQLite, PreparedStatements, Transactions, Java Collections | `DatabaseManager` with SQLite WAL mode. Parameterized SQL queries, batch updates, and transaction rollbacks (`setAutoCommit(false)`). Java Collections: `LinkedHashSet` (LRU/FIFO), `TreeSet` (LFU/TTL), `LinkedList` (bounded history), `HashMap` (in-memory store). Concepts Lab comparisons of `Vector`, `Hashtable`, and fail-fast `ConcurrentModificationException`. |
-| **Unit 5: JavaFX Desktop Architecture** | Application lifecycle, UI controls, Layouts, Effects, Transforms | JavaFX desktop GUI with 9 tabs. Responsive design: background tasks via `Task<T>` and throttled 250ms polling `Timeline`. Controls: `TableView`, `TreeView`, `ListView`, `RadioButton`, `ComboBox`, `LineChart`, `BarChart`. Effects: `DropShadow`, `Glow`, `Scale`, and `Rotate`. Procedural 16x16 canvas icons via `IconFactory`. |
+| **Unit 4: JDBC & Collections Framework** | SQLite, PreparedStatements, Transactions, Java Collections | `DatabaseManager` with SQLite WAL mode. Parameterized SQL queries, batch updates, and transaction rollbacks (`setAutoCommit(false)`). Java Collections: `LinkedHashSet` (LRU/FIFO), `TreeSet` (LFU/TTL), `LinkedList` (bounded history), `HashMap` (in-memory store), thread safety considerations of legacy vs modern collections. |
+| **Unit 5: JavaFX Desktop Architecture** | Application lifecycle, UI controls, Layouts, Effects, Transforms | JavaFX desktop GUI with 8 tabs. Responsive design: background tasks via `Task<T>` and throttled 250ms polling `Timeline`. Controls: `TableView`, `TreeView`, `ListView`, `RadioButton`, `ComboBox`, `LineChart`, `BarChart`. Effects: `DropShadow`, `Glow`, `Scale`, and `Rotate`. Procedural 16x16 canvas icons via `IconFactory`. |
 
 ---
 
@@ -91,7 +90,7 @@ java -cp "target/multithreaded-in-memory-cache-1.0.0.jar:target/dependency/*" co
 
 | Shortcut | Action |
 |---|---|
-| **Ctrl + 1** to **Ctrl + 9** | Switch directly to Tabs 1 through 9 |
+| **Ctrl + 1** to **Ctrl + 8** | Switch directly to Tabs 1 through 8 |
 | **Ctrl + S** | Save binary snapshot file (`.jcs`) |
 | **Ctrl + O** | Load binary snapshot file (`.jcs`) |
 | **Ctrl + E** | Export live cache entries to CSV |

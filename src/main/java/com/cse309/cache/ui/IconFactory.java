@@ -23,7 +23,6 @@ public final class IconFactory {
         START,
         STOP,
         STATS,
-        BENCHMARK,
         AWT,
         ABOUT,
         EXIT
@@ -47,7 +46,6 @@ public final class IconFactory {
             case START -> drawStart(gc);
             case STOP -> drawStop(gc);
             case STATS -> drawStats(gc);
-            case BENCHMARK -> drawBenchmark(gc);
             case AWT -> drawAwt(gc);
             case ABOUT -> drawAbout(gc);
             case EXIT -> drawExit(gc);
@@ -121,13 +119,6 @@ public final class IconFactory {
         gc.fillRect(2, 10, 3, 5);
         gc.fillRect(6, 6, 3, 9);
         gc.fillRect(10, 2, 3, 13);
-    }
-
-    private static void drawBenchmark(GraphicsContext gc) {
-        gc.setStroke(Color.SLATEBLUE);
-        gc.setLineWidth(2);
-        gc.strokeOval(2, 2, 12, 12);
-        gc.strokeLine(8, 8, 11, 5);
     }
 
     private static void drawAwt(GraphicsContext gc) {

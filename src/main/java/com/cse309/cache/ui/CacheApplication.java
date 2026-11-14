@@ -52,7 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Main JavaFX Application with 9 tabs, menu bar, procedural icons,
+ * Main JavaFX Application with 8 tabs, menu bar, procedural icons,
  * toolbar, status bar, and 250ms Timeline refresh polling (Unit 5).
  */
 public class CacheApplication extends Application {
@@ -72,7 +72,6 @@ public class CacheApplication extends Application {
     private StatisticsTab statisticsTab;
     private PersistenceTab persistenceTab;
     private HistoryTab historyTab;
-    private ConceptsLabTab conceptsLabTab;
 
     // Status bar labels
     private final Label statusPersistenceLabel = new Label("Persistence: INITIALIZING");
@@ -127,7 +126,6 @@ public class CacheApplication extends Application {
         statisticsTab = new StatisticsTab(cacheManager);
         persistenceTab = new PersistenceTab(cacheManager);
         historyTab = new HistoryTab(cacheManager);
-        conceptsLabTab = new ConceptsLabTab();
 
         tabPane.getTabs().addAll(
                 dashboardTab,
@@ -137,8 +135,7 @@ public class CacheApplication extends Application {
                 simulatorTab,
                 statisticsTab,
                 persistenceTab,
-                historyTab,
-                conceptsLabTab
+                historyTab
         );
         root.setCenter(tabPane);
 
@@ -224,21 +221,18 @@ public class CacheApplication extends Application {
         MenuItem startSim = new MenuItem("Start Simulation", IconFactory.createIcon(IconFactory.IconType.START));
         startSim.setOnAction(e -> tabPane.getSelectionModel().select(simulatorTab));
 
-        MenuItem runBench = new MenuItem("Run Benchmark", IconFactory.createIcon(IconFactory.IconType.BENCHMARK));
-        runBench.setOnAction(e -> tabPane.getSelectionModel().select(statisticsTab));
-
         MenuItem awtConsole = new MenuItem("AWT Event Console (Out of Process)", IconFactory.createIcon(IconFactory.IconType.AWT));
         awtConsole.setOnAction(e -> launchAwtConsole());
 
-        toolsMenu.getItems().addAll(startSim, runBench, new SeparatorMenuItem(), awtConsole);
+        toolsMenu.getItems().addAll(startSim, new SeparatorMenuItem(), awtConsole);
 
         // --- View Menu ---
         Menu viewMenu = new Menu("View");
         KeyCode[] digitKeys = {
             KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4, KeyCode.DIGIT5,
-            KeyCode.DIGIT6, KeyCode.DIGIT7, KeyCode.DIGIT8, KeyCode.DIGIT9
+            KeyCode.DIGIT6, KeyCode.DIGIT7, KeyCode.DIGIT8
         };
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 8; i++) {
             final int index = i;
             MenuItem tabItem = new MenuItem("Switch to Tab " + (index + 1) + " (" + getTabName(index) + ")");
             tabItem.setAccelerator(new KeyCodeCombination(digitKeys[index], KeyCombination.CONTROL_DOWN));
@@ -270,7 +264,6 @@ public class CacheApplication extends Application {
             case 5 -> "Statistics";
             case 6 -> "Persistence";
             case 7 -> "History";
-            case 8 -> "Concepts Lab";
             default -> "Tab";
         };
     }
@@ -344,7 +337,6 @@ public class CacheApplication extends Application {
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT6, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(5));
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT7, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(6));
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT8, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(7));
-        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT9, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(8));
     }
 
     private void startPollingTimeline() {
@@ -431,7 +423,7 @@ public class CacheApplication extends Application {
         alert.setTitle("Keyboard Shortcuts");
         alert.setHeaderText("Available Application Shortcuts");
         alert.setContentText("""
-            Ctrl+1 .. Ctrl+9 : Switch between Tabs 1 to 9
+            Ctrl+1 .. Ctrl+8 : Switch between Tabs 1 to 8
             Ctrl+S           : Save binary snapshot file (.jcs)
             Ctrl+O           : Load binary snapshot file (.jcs)
             Ctrl+E           : Export entries to CSV

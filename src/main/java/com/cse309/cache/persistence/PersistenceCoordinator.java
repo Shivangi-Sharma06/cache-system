@@ -31,7 +31,6 @@ public final class PersistenceCoordinator {
     private final DatabaseManager databaseManager;
     private final SnapshotRepository snapshotRepository;
     private final OperationHistoryRepository historyRepository;
-    private final BenchmarkRepository benchmarkRepository;
 
     private final BoundedBuffer<OperationRecord> historyWriteQueue;
     private volatile PersistenceStatus status;
@@ -50,7 +49,6 @@ public final class PersistenceCoordinator {
         this.databaseManager = Objects.requireNonNull(databaseManager, "databaseManager cannot be null");
         this.snapshotRepository = new SnapshotRepository(databaseManager);
         this.historyRepository = new OperationHistoryRepository(databaseManager);
-        this.benchmarkRepository = new BenchmarkRepository(databaseManager);
         this.historyWriteQueue = new BoundedBuffer<>(HISTORY_QUEUE_CAPACITY);
         this.mode = initialMode != null ? initialMode : PersistenceMode.IN_MEMORY_ONLY;
         this.status = PersistenceStatus.available(System.currentTimeMillis());
@@ -242,10 +240,6 @@ public final class PersistenceCoordinator {
 
     public OperationHistoryRepository getHistoryRepository() {
         return historyRepository;
-    }
-
-    public BenchmarkRepository getBenchmarkRepository() {
-        return benchmarkRepository;
     }
 
     public DatabaseManager getDatabaseManager() {
