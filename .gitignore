@@ -33,6 +33,6 @@ Thumbs.db
 docs/
 *.md
 !README.md
-
+!EXPLAINATION.md
 # Test suite directory (pure verification tests against the codebase, independent from production runtime)
 src/test/
