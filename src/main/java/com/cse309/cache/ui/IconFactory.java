@@ -23,7 +23,6 @@ public final class IconFactory {
         START,
         STOP,
         STATS,
-        AWT,
         ABOUT,
         EXIT
     }
@@ -46,7 +45,6 @@ public final class IconFactory {
             case START -> drawStart(gc);
             case STOP -> drawStop(gc);
             case STATS -> drawStats(gc);
-            case AWT -> drawAwt(gc);
             case ABOUT -> drawAbout(gc);
             case EXIT -> drawExit(gc);
         }
@@ -119,13 +117,6 @@ public final class IconFactory {
         gc.fillRect(2, 10, 3, 5);
         gc.fillRect(6, 6, 3, 9);
         gc.fillRect(10, 2, 3, 13);
-    }
-
-    private static void drawAwt(GraphicsContext gc) {
-        gc.setFill(Color.DARKSLATEGRAY);
-        gc.fillRect(2, 2, 12, 12);
-        gc.setFill(Color.LIME);
-        gc.fillText(">", 4, 10);
     }
 
     private static void drawAbout(GraphicsContext gc) {

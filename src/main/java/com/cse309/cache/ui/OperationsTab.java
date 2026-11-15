@@ -3,6 +3,7 @@ package com.cse309.cache.ui;
 import com.cse309.cache.app.CacheManager;
 import com.cse309.cache.core.CacheLookupResult;
 import com.cse309.cache.core.CacheWriteResult;
+import com.cse309.cache.eviction.EvictionPolicyType;
 import com.cse309.cache.exception.CacheException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -121,7 +122,8 @@ public final class OperationsTab extends Tab {
         resultStatusLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #155724;");
         resultCard.getChildren().addAll(cardTitle, resultStatusLabel, resultLatencyLabel, resultDetailsLabel);
 
-        leftForm.getChildren().addAll(grid, buttonBar, resultCard);
+        HBox tuningBox = createTuningBox();
+        leftForm.getChildren().addAll(tuningBox, grid, buttonBar, resultCard);
 
         // Right side: Recent Results ListView (Unit 5)
         VBox rightList = new VBox(6);
@@ -282,5 +284,53 @@ public final class OperationsTab extends Tab {
         while (recentResultsList.getItems().size() > 50) {
             recentResultsList.getItems().remove(recentResultsList.getItems().size() - 1);
         }
+    }
+
+    private HBox createTuningBox() {
+        HBox tuningBox = new HBox(10);
+        tuningBox.setAlignment(Pos.CENTER_LEFT);
+        tuningBox.setStyle("-fx-background-color: #f8f9fa; -fx-padding: 8; -fx-border-color: #dee2e6; -fx-border-radius: 4;");
+
+        ComboBox<EvictionPolicyType> policyCombo = new ComboBox<>();
+        policyCombo.getItems().addAll(EvictionPolicyType.LRU, EvictionPolicyType.FIFO, EvictionPolicyType.LFU);
+        policyCombo.setValue(cacheManager.getCache().getEvictionPolicyType());
+        policyCombo.setOnAction(e -> {
+            EvictionPolicyType selected = policyCombo.getValue();
+            if (selected != null) {
+                cacheManager.getCache().setEvictionPolicy(selected);
+                setResult("POLICY_CHANGED", 0, "Switched eviction policy to " + selected, true);
+            }
+        });
+
+        TextField capField = new TextField(String.valueOf(cacheManager.getCache().getCapacity()));
+        capField.setPrefWidth(75);
+        Button setCapBtn = new Button("Apply Capacity");
+        setCapBtn.setOnAction(e -> {
+            try {
+                int newCap = Integer.parseInt(capField.getText().trim());
+                if (newCap <= 0) return;
+                int currentSize = cacheManager.getCache().size();
+                if (newCap < currentSize) {
+                    int toEvict = cacheManager.getCache().previewCapacityChange(newCap);
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                            String.format("Reducing capacity to %d will immediately evict %d entries using %s.\nProceed?",
+                                    newCap, toEvict, cacheManager.getCache().getEvictionPolicyType()),
+                            ButtonType.YES, ButtonType.NO);
+                    confirm.setHeaderText("Confirm Eviction");
+                    var res = confirm.showAndWait();
+                    if (res.isEmpty() || res.get() != ButtonType.YES) return;
+                }
+                cacheManager.getCache().setCapacity(newCap);
+                setResult("CAPACITY_UPDATED", 0, "Capacity set to " + newCap, true);
+            } catch (com.cse309.cache.exception.InvalidCacheCapacityException ex) {
+                setResult("INVALID_CAPACITY", 0, ex.getUserMessage(), false);
+            } catch (NumberFormatException ignored) {}
+        });
+
+        tuningBox.getChildren().addAll(
+                new Label("Policy:"), policyCombo,
+                new Label("Capacity:"), capField, setCapBtn
+        );
+        return tuningBox;
     }
 }

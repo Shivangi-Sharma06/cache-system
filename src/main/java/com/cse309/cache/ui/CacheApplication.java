@@ -2,7 +2,6 @@ package com.cse309.cache.ui;
 
 import com.cse309.cache.app.AppPaths;
 import com.cse309.cache.app.CacheManager;
-import com.cse309.cache.awt.AwtEventConsole;
 import com.cse309.cache.config.ConfigurationStore;
 import com.cse309.cache.event.CacheEvent;
 import com.cse309.cache.event.CacheEventListener;
@@ -52,8 +51,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Main JavaFX Application with 8 tabs, menu bar, procedural icons,
- * toolbar, status bar, and 250ms Timeline refresh polling (Unit 5).
+ * Main JavaFX Application with 4 core tabs (Dashboard, Operations, Simulator, Persistence),
+ * menu bar, procedural icons, toolbar, status bar, and 250ms Timeline refresh polling (Unit 5).
  */
 public class CacheApplication extends Application {
 
@@ -66,12 +65,8 @@ public class CacheApplication extends Application {
     private TabPane tabPane;
     private DashboardTab dashboardTab;
     private OperationsTab operationsTab;
-    private ExplorerTab explorerTab;
-    private ConfigurationTab configurationTab;
     private SimulatorTab simulatorTab;
-    private StatisticsTab statisticsTab;
     private PersistenceTab persistenceTab;
-    private HistoryTab historyTab;
 
     // Status bar labels
     private final Label statusPersistenceLabel = new Label("Persistence: INITIALIZING");
@@ -120,22 +115,14 @@ public class CacheApplication extends Application {
         tabPane = new TabPane();
         dashboardTab = new DashboardTab(cacheManager);
         operationsTab = new OperationsTab(cacheManager);
-        explorerTab = new ExplorerTab(cacheManager);
-        configurationTab = new ConfigurationTab(cacheManager);
         simulatorTab = new SimulatorTab(cacheManager);
-        statisticsTab = new StatisticsTab(cacheManager);
         persistenceTab = new PersistenceTab(cacheManager);
-        historyTab = new HistoryTab(cacheManager);
 
         tabPane.getTabs().addAll(
                 dashboardTab,
                 operationsTab,
-                explorerTab,
-                configurationTab,
                 simulatorTab,
-                statisticsTab,
-                persistenceTab,
-                historyTab
+                persistenceTab
         );
         root.setCenter(tabPane);
 
@@ -221,18 +208,14 @@ public class CacheApplication extends Application {
         MenuItem startSim = new MenuItem("Start Simulation", IconFactory.createIcon(IconFactory.IconType.START));
         startSim.setOnAction(e -> tabPane.getSelectionModel().select(simulatorTab));
 
-        MenuItem awtConsole = new MenuItem("AWT Event Console (Out of Process)", IconFactory.createIcon(IconFactory.IconType.AWT));
-        awtConsole.setOnAction(e -> launchAwtConsole());
-
-        toolsMenu.getItems().addAll(startSim, new SeparatorMenuItem(), awtConsole);
+        toolsMenu.getItems().add(startSim);
 
         // --- View Menu ---
         Menu viewMenu = new Menu("View");
         KeyCode[] digitKeys = {
-            KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4, KeyCode.DIGIT5,
-            KeyCode.DIGIT6, KeyCode.DIGIT7, KeyCode.DIGIT8
+            KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4
         };
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 4; i++) {
             final int index = i;
             MenuItem tabItem = new MenuItem("Switch to Tab " + (index + 1) + " (" + getTabName(index) + ")");
             tabItem.setAccelerator(new KeyCodeCombination(digitKeys[index], KeyCombination.CONTROL_DOWN));
@@ -258,12 +241,8 @@ public class CacheApplication extends Application {
         return switch (idx) {
             case 0 -> "Dashboard";
             case 1 -> "Operations";
-            case 2 -> "Explorer";
-            case 3 -> "Configuration";
-            case 4 -> "Simulator";
-            case 5 -> "Statistics";
-            case 6 -> "Persistence";
-            case 7 -> "History";
+            case 2 -> "Simulator";
+            case 3 -> "Persistence";
             default -> "Tab";
         };
     }
@@ -278,10 +257,8 @@ public class CacheApplication extends Application {
         loadBtn.setOnAction(e -> handleLoadSnapshotFile(stage));
 
         Button refreshBtn = new Button("", IconFactory.createIcon(IconFactory.IconType.REFRESH));
-        refreshBtn.setTooltip(new Tooltip("Refresh Views (F5)"));
+        refreshBtn.setTooltip(new Tooltip("Refresh Snapshots (F5)"));
         refreshBtn.setOnAction(e -> {
-            explorerTab.forceRefresh();
-            historyTab.refreshHistoryTable();
             persistenceTab.loadDatabaseSnapshotsAsync();
         });
 
@@ -304,11 +281,7 @@ public class CacheApplication extends Application {
         statsBtn.setTooltip(new Tooltip("Reset Statistics"));
         statsBtn.setOnAction(e -> cacheManager.getStatistics().reset());
 
-        Button awtBtn = new Button("", IconFactory.createIcon(IconFactory.IconType.AWT));
-        awtBtn.setTooltip(new Tooltip("Launch AWT Event Console (Out of Process)"));
-        awtBtn.setOnAction(e -> launchAwtConsole());
-
-        return new ToolBar(saveBtn, loadBtn, refreshBtn, purgeBtn, startSimBtn, stopSimBtn, statsBtn, awtBtn);
+        return new ToolBar(saveBtn, loadBtn, refreshBtn, purgeBtn, startSimBtn, stopSimBtn, statsBtn);
     }
 
     private HBox createStatusBar() {
@@ -326,17 +299,12 @@ public class CacheApplication extends Application {
 
     private void setupKeyboardAccelerators(Scene scene, Stage stage) {
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F5), () -> {
-            explorerTab.forceRefresh();
-            historyTab.refreshHistoryTable();
+            persistenceTab.loadDatabaseSnapshotsAsync();
         });
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT1, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(0));
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT2, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(1));
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT3, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(2));
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT4, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(3));
-        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT5, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(4));
-        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT6, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(5));
-        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT7, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(6));
-        scene.getAccelerators().put(new KeyCodeCombination(KeyCode.DIGIT8, KeyCombination.CONTROL_DOWN), () -> tabPane.getSelectionModel().select(7));
     }
 
     private void startPollingTimeline() {
@@ -363,24 +331,12 @@ public class CacheApplication extends Application {
         // Update tabs
         dashboardTab.update(stats, simProgress, recentEvictionsForDashboard);
         simulatorTab.update(simProgress, workerStatuses);
-        statisticsTab.update(stats);
-        explorerTab.checkAndRefresh();
 
         // Update status bar
         PersistenceStatus pStat = cacheManager.getPersistenceCoordinator().getStatus();
         statusPersistenceLabel.setText("Persistence: " + (pStat.isAvailable() ? "AVAILABLE" : "UNAVAILABLE"));
         statusPolicyLabel.setText("Policy: " + cache.getEvictionPolicyType().name());
         statusThreadsLabel.setText(String.format("Workers: %d running", simProgress.getRunningWorkers()));
-    }
-
-    private void launchAwtConsole() {
-        try {
-            AwtEventConsole.launchInNewProcess();
-            statusMessageLabel.setText("AWT Event Console process launched.");
-        } catch (IOException ex) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Failed to launch AWT Console process: " + ex.getMessage());
-            alert.showAndWait();
-        }
     }
 
     private void handleSaveSnapshotFile(Stage stage) {
@@ -423,11 +379,11 @@ public class CacheApplication extends Application {
         alert.setTitle("Keyboard Shortcuts");
         alert.setHeaderText("Available Application Shortcuts");
         alert.setContentText("""
-            Ctrl+1 .. Ctrl+8 : Switch between Tabs 1 to 8
+            Ctrl+1 .. Ctrl+4 : Switch between Tabs 1 to 4
             Ctrl+S           : Save binary snapshot file (.jcs)
             Ctrl+O           : Load binary snapshot file (.jcs)
             Ctrl+E           : Export entries to CSV
-            F5               : Refresh views (Explorer, History)
+            F5               : Refresh snapshots list
             Ctrl+Q           : Exit application
             """);
         alert.showAndWait();

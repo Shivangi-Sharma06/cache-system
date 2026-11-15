@@ -1,6 +1,6 @@
 # Multithreaded In-Memory Caching System
 
-A high-performance, thread-safe in-memory key-value caching system developed in Java 17+ with a JavaFX desktop interface, dual persistence (SQLite WAL and binary `.jcs`), and an isolated AWT Delegation Event Model console.
+A high-performance, thread-safe in-memory key-value caching system developed in Java 17+ with a JavaFX desktop interface and dual persistence (SQLite WAL and binary `.jcs`).
 
 Built as a capstone project for **CSE 309 (Advanced Java Programming)**, demonstrating core Java concurrency primitives, object-oriented design patterns, collections, I/O streams, JDBC, and desktop GUI architecture.
 
@@ -18,8 +18,11 @@ Built as a capstone project for **CSE 309 (Advanced Java Programming)**, demonst
 - **Dual Persistence Layer**:
   - **SQLite Database**: Out-of-band durable storage (WAL mode, transactions, rollback) for point-in-time snapshots and operation history. Zero credentials needed.
   - **Binary Snapshot (`.jcs`)**: Fast, portable serialization via `DataOutputStream` with magic header (`0x4A435331`) and CRC32 integrity checksum.
-- **JavaFX Desktop GUI (8 Tabs)**: Dashboard, Operations, Explorer, Configuration, Simulator, Statistics, Persistence, and History with real-time charts and visual effects (`DropShadow`, `Glow`, `Scale`, `Rotate`).
-- **AWT Event Console**: Standalone process demonstrating the pure Delegation Event Model (`ActionListener`, `KeyListener`, `KeyAdapter`, `WindowAdapter`).
+- **Streamlined JavaFX Desktop GUI (4 Core Tabs)**:
+  - **Dashboard**: Real-time metrics cards, hit-ratio trend line chart, and live eviction log with visual effects (`DropShadow`, `Glow`, `Scale`, `Rotate`).
+  - **Operations**: Interactive CRUD form (Put, Get, Update, Delete, Search, Clear) with live latency measurement and integrated Eviction Policy & Capacity tuning.
+  - **Simulator**: Multi-threaded concurrency workload generator (1–64 worker threads) with live throughput and worker thread states.
+  - **Persistence**: Point-in-time SQLite database snapshots (warm-start & recovery) and portable binary `.jcs` file exports.
 
 ---
 
@@ -41,9 +44,9 @@ Built as a capstone project for **CSE 309 (Advanced Java Programming)**, demonst
 |---|---|---|
 | **Unit 1: Core OOP & Java Fundamentals** | Classes, Encapsulation, Abstract classes, Interfaces, Inheritance | `Cache<K,V>` interface, `AbstractCache<K,V>` skeletal base, `ThreadSafeCache<K,V>`, `StringCache`. Constructor chaining via `this(...)` in `CacheConfiguration`. Static factories in `CacheFactory`. Immutability with `final` fields in `CacheEntrySnapshot`. |
 | **Unit 2: Polymorphism, Exceptions & Generics** | Overloading, Overriding, Dynamic dispatch, Checked exceptions, Generics | Overloaded `put()` and `update()`. Dynamic eviction policy dispatch via `EvictionPolicy<K>`. Custom exception hierarchy rooted at `CacheException` with user-friendly messages. Multi-catch (`A \| B e`), nested `try`/`finally` rollback. Bounded generics `<T extends Comparable<? super T>>` and wildcards `Map<? extends K, ? extends V>`. |
-| **Unit 3: Multithreading, I/O & Event Model** | Thread states, Monitors, Inter-thread comms, Byte streams, AWT events | `WorkerThread extends Thread`, `OperationProducerTask implements Runnable`. Live thread state inspection (`Thread.getState()`). Monitor synchronization, `wait()` inside `while` loops, and `notifyAll()` in `BoundedBuffer` and `PauseGate`. Binary `.jcs` file I/O via `DataOutputStream` and CRC32. AWT Delegation Event Model (`ActionListener`, `KeyListener`, `KeyAdapter`, `WindowAdapter`). |
+| **Unit 3: Multithreading & Byte Streams I/O** | Thread states, Monitors, Inter-thread comms, Byte streams | `WorkerThread extends Thread`, `OperationProducerTask implements Runnable`. Live thread state inspection (`Thread.getState()`). Monitor synchronization, `wait()` inside `while` loops, and `notifyAll()` in `BoundedBuffer` and `PauseGate`. Binary `.jcs` file I/O via `DataOutputStream` and CRC32. |
 | **Unit 4: JDBC & Collections Framework** | SQLite, PreparedStatements, Transactions, Java Collections | `DatabaseManager` with SQLite WAL mode. Parameterized SQL queries, batch updates, and transaction rollbacks (`setAutoCommit(false)`). Java Collections: `LinkedHashSet` (LRU/FIFO), `TreeSet` (LFU/TTL), `LinkedList` (bounded history), `HashMap` (in-memory store), thread safety considerations of legacy vs modern collections. |
-| **Unit 5: JavaFX Desktop Architecture** | Application lifecycle, UI controls, Layouts, Effects, Transforms | JavaFX desktop GUI with 8 tabs. Responsive design: background tasks via `Task<T>` and throttled 250ms polling `Timeline`. Controls: `TableView`, `TreeView`, `ListView`, `RadioButton`, `ComboBox`, `LineChart`, `BarChart`. Effects: `DropShadow`, `Glow`, `Scale`, and `Rotate`. Procedural 16x16 canvas icons via `IconFactory`. |
+| **Unit 5: JavaFX Desktop Architecture** | Application lifecycle, UI controls, Layouts, Effects, Transforms | JavaFX desktop GUI with 4 core tabs (Dashboard, Operations, Simulator, Persistence). Responsive design: background tasks via `Task<T>` and throttled 250ms polling `Timeline`. Controls: `TableView`, `ListView`, `ComboBox`, `LineChart`, `ProgressBar`. Effects: `DropShadow`, `Glow`, `Scale`, and `Rotate`. Procedural 16x16 canvas icons via `IconFactory`. |
 
 ---
 
@@ -72,13 +75,7 @@ mvn clean compile
 mvn javafx:run
 ```
 
-### 3. Launch Standalone AWT Event Console
-```bash
-java -cp target/classes com.cse309.cache.awt.AwtEventConsole
-```
-*(Can also be opened directly from the JavaFX UI via **Tools > Launch AWT Event Console**)*
-
-### 4. Package Standalone JAR (Optional)
+### 3. Package Standalone JAR (Optional)
 ```bash
 mvn package -DskipTests
 java -cp "target/multithreaded-in-memory-cache-1.0.0.jar:target/dependency/*" com.cse309.cache.ui.Launcher
@@ -90,9 +87,9 @@ java -cp "target/multithreaded-in-memory-cache-1.0.0.jar:target/dependency/*" co
 
 | Shortcut | Action |
 |---|---|
-| **Ctrl + 1** to **Ctrl + 8** | Switch directly to Tabs 1 through 8 |
+| **Ctrl + 1** to **Ctrl + 4** | Switch directly to Tabs 1 through 4 |
 | **Ctrl + S** | Save binary snapshot file (`.jcs`) |
 | **Ctrl + O** | Load binary snapshot file (`.jcs`) |
 | **Ctrl + E** | Export live cache entries to CSV |
-| **F5** | Refresh all views (Explorer, Dashboard, Statistics) |
+| **F5** | Refresh snapshots list |
 | **Ctrl + Q** | Gracefully shut down and exit |
